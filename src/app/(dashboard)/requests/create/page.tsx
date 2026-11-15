@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
+import { addDemoItem } from "@/lib/demo-store";
 
 export default function CreateRequest() {
   const router = useRouter();
@@ -45,6 +46,11 @@ export default function CreateRequest() {
       if (!response.ok) {
         throw new Error("Failed to create request");
       }
+
+      // The API no longer persists writes, so hold the request locally for the
+      // rest of this session.
+      const { persisted, message, ...created } = await response.json();
+      addDemoItem("requests", created);
 
       // Redirect back to requests page
       router.push("/requests");

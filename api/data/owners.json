@@ -1,0 +1,23 @@
+[
+  { "id": 1,  "name": "John Pork",         "building": "A", "room": "101", "email": "john.p@strata.com",      "phone": "0400 000 001", "levies": 1, "insured": 1 },
+  { "id": 2,  "name": "Carl Johnson",      "building": "A", "room": "102", "email": "cj@strata.com",          "phone": "0400 000 002", "levies": 1, "insured": 0 },
+  { "id": 3,  "name": "Akiyama Mizuki",    "building": "A", "room": "114", "email": "amiya@strata.com",       "phone": "0400 000 003", "levies": 1, "insured": 1 },
+  { "id": 4,  "name": "Ena Shinonome",     "building": "A", "room": "514", "email": "enanan@strata.com",      "phone": "0400 000 004", "levies": 1, "insured": 1 },
+  { "id": 5,  "name": "David Wilson",      "building": "B", "room": "202", "email": "david.w@strata.com",     "phone": "0400 000 005", "levies": 1, "insured": 1 },
+  { "id": 6,  "name": "Lisa Anderson",     "building": "B", "room": "203", "email": "lisa.a@strata.com",      "phone": "0400 000 006", "levies": 1, "insured": 0 },
+  { "id": 7,  "name": "Alex Li",           "building": "C", "room": "404", "email": "aspartame@strata.com",   "phone": "0400 000 007", "levies": 1, "insured": 1 },
+  { "id": 8,  "name": "Jennifer Martinez", "building": "C", "room": "310", "email": "jennifer.m@strata.com",  "phone": "0400 000 008", "levies": 1, "insured": 1 },
+  { "id": 9,  "name": "William Thomas",    "building": "C", "room": "311", "email": "william.t@strata.com",   "phone": "0400 000 009", "levies": 1, "insured": 1 },
+  { "id": 10, "name": "Patricia Garcia",   "building": "D", "room": "401", "email": "patricia.g@strata.com",  "phone": "0400 000 010", "levies": 1, "insured": 1 },
+  { "id": 11, "name": "James Ramn",        "building": "D", "room": "402", "email": "james.r@strata.com",     "phone": "0400 000 011", "levies": 0, "insured": 1 },
+  { "id": 12, "name": "Elizabeth White",   "building": "D", "room": "403", "email": "elizabeth.w@strata.com", "phone": "0400 000 012", "levies": 1, "insured": 0 },
+  { "id": 13, "name": "Thomas Lee",        "building": "A", "room": "104", "email": "thomas.l@strata.com",    "phone": "0400 000 013", "levies": 1, "insured": 1 },
+  { "id": 14, "name": "Susan Clark",       "building": "B", "room": "204", "email": "susan.c@strata.com",     "phone": "0400 000 014", "levies": 1, "insured": 1 },
+  { "id": 15, "name": "Daniel Hall",       "building": "C", "room": "304", "email": "daniel.h@strata.com",    "phone": "0400 000 015", "levies": 1, "insured": 1 },
+  { "id": 16, "name": "Nancy Allen",       "building": "D", "room": "404", "email": "nancy.a@strata.com",     "phone": "0400 000 016", "levies": 1, "insured": 1 },
+  { "id": 17, "name": "Joseph Young",      "building": "A", "room": "105", "email": "joseph.y@strata.com",    "phone": "0400 000 017", "levies": 1, "insured": 1 },
+  { "id": 18, "name": "Karen King",        "building": "B", "room": "205", "email": "karen.k@strata.com",     "phone": "0400 000 018", "levies": 1, "insured": 1 },
+  { "id": 19, "name": "Cho Chan Hsao",     "building": "C", "room": "305", "email": "cch@strata.com",         "phone": "0400 000 019", "levies": 1, "insured": 1 },
+  { "id": 20, "name": "Betty Scott",       "building": "D", "room": "405", "email": "betty.s@strata.com",     "phone": "0400 000 020", "levies": 1, "insured": 1 },
+  { "id": 21, "name": "Jason Portman",     "building": "D", "room": "111", "email": "JP@strata.com",          "phone": "0400 000 021", "levies": 1, "insured": 1 }
+]

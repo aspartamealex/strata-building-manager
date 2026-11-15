@@ -1,90 +1,49 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: https://stratabuildingmanager-alexs-projects-4a823196.vercel.app');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Access-Control-Allow-Credentials: true');
+require_once __DIR__ . '/lib/strata.php';
 
-// Parse DATABASE_URL
-$db_url = getenv('DATABASE_URL') ?: 'mysql://root:kyXWJswlAqXfarmmmhmkDuqDpJEuGoRx@interchange.proxy.rlwy.net:15918/railway';
-if (!$db_url) 
+strata_begin(['GET']);
+
+$owners = strata_table('owners');
+
+// Previously: SELECT id, name, building, room FROM owners
+//             WHERE insured = 0 / levies = 0 ORDER BY building, room
+usort($owners, function ($a, $b)
 {
-    http_response_code(500);
-    echo json_encode(['error' => 'DATABASE_URL not set']);
-    exit;
-}
+    return [$a['building'], $a['room']] <=> [$b['building'], $b['room']];
+});
 
-// Parse the URL
-$url = parse_url($db_url);
-if (!$url || !isset($url['host'], $url['user'], $url['pass'], $url['path'])) 
-{
-    http_response_code(500);
-    echo json_encode(['error' => 'Invalid DATABASE_URL format']);
-    exit;
-}
-
-// Extract components
-$host = $url['host'];
-$port = $url['port'] ?? 3306;
-$user = $url['user'];
-$pass = $url['pass'];
-$dbname = ltrim($url['path'], '/');
-
-// Create connection
-$db = new mysqli($host, $user, $pass, $dbname, $port);
-
-if ($db->connect_error) 
-{
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed: ' . $db->connect_error]);
-    exit;
-}
-
-// Only handle GET requests
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') 
-{
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed']);
-    exit;
-}
-
-// Get total count and insured count
-$totalQuery = "SELECT COUNT(*) as total FROM owners";
-$totalResult = $db->query($totalQuery);
-$totalCount = $totalResult->fetch_assoc()['total'];
-
-$insuredQuery = "SELECT COUNT(*) as insured FROM owners WHERE insured = 1";
-$insuredResult = $db->query($insuredQuery);
-$insuredCount = $insuredResult->fetch_assoc()['insured'];
-
-$leviesQuery = "SELECT COUNT(*) as paid FROM owners WHERE levies = 1";
-$leviesResult = $db->query($leviesQuery);
-$leviesPaidCount = $leviesResult->fetch_assoc()['paid'];
-
-// Get uninsured owners
-$uninsuredQuery = "SELECT id, name, building, room FROM owners WHERE insured = 0 ORDER BY building, room";
-$uninsuredResult = $db->query($uninsuredQuery);
+$insuredCount = 0;
+$leviesPaidCount = 0;
 $uninsuredOwners = [];
-while ($row = $uninsuredResult->fetch_assoc()) 
-{
-    $uninsuredOwners[] = $row;
-}
-
-// Get unpaid levies
-$unpaidQuery = "SELECT id, name, building, room FROM owners WHERE levies = 0 ORDER BY building, room";
-$unpaidResult = $db->query($unpaidQuery);
 $unpaidOwners = [];
-while ($row = $unpaidResult->fetch_assoc()) 
+
+foreach ($owners as $owner)
 {
-    $unpaidOwners[] = $row;
+    $summary = strata_stringify(strata_columns($owner, ['id', 'name', 'building', 'room']));
+
+    if ((int) $owner['insured'] === 1)
+    {
+        $insuredCount++;
+    }
+    else
+    {
+        $uninsuredOwners[] = $summary;
+    }
+
+    if ((int) $owner['levies'] === 1)
+    {
+        $leviesPaidCount++;
+    }
+    else
+    {
+        $unpaidOwners[] = $summary;
+    }
 }
 
 echo json_encode([
-    'total' => $totalCount,
-    'insured' => $insuredCount,
-    'leviesPaid' => $leviesPaidCount,
+    'total' => (string) count($owners),
+    'insured' => (string) $insuredCount,
+    'leviesPaid' => (string) $leviesPaidCount,
     'uninsuredOwners' => $uninsuredOwners,
-    'unpaidOwners' => $unpaidOwners
+    'unpaidOwners' => $unpaidOwners,
 ]);
-
-$db->close();

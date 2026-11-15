@@ -1,93 +1,92 @@
-# VisActor Next.js Dashboard Template
+# Strata Building Manager
 
-A modern dashboard template built with [VisActor](https://visactor.io/) and Next.js, featuring a beautiful UI and rich data visualization components.
+A management dashboard for a strata (apartment block) committee.
+Deployed on Vercel:
+https://visactor-nextjs-template-omega.vercel.app/
 
-[Live Demo](https://visactor-next-template.vercel.app/)
+Built in 2025 as a self-directed learning project for INFO1111 at the University of Sydney. 
+The brief was simply "teach yourself a technology and build something with it". At the start of it I
+had never written TypeScript, PHP or SQL, and I started everything from scratch.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=A%20modern%20dashboard%20with%20VisActor%20charts%2C%20dark%20mode%2C%20and%20data%20visualization%20for%20seamless%20analytics.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F646TLqKGSTOnp1CD1IUqoM%2Fa119adac1f5a844f9d42f807ddc075f5%2Fthumbnail.png&demo-title=VisActor%20Next.js%20Template&demo-url=https%3A%2F%2Fvisactor-next-template.vercel.app%2F&from=templates&project-name=VisActor%20Next.js%20Template&repository-name=visactor-nextjs-template&repository-url=https%3A%2F%2Fgithub.com%2Fmengxi-ream%2Fvisactor-next-template&skippable-integrations=1)
+![Dashboard](public/screenshots/dashboard.png)
 
-## Features
+## What it does
 
-- 📊 **Rich Visualizations** - Powered by VisActor, including bar charts, gauge charts, circle packing charts, and more
-- 🌗 **Dark Mode** - Seamless dark/light mode switching with system preference support
-- 📱 **Responsive Design** - Fully responsive layout that works on all devices
-- 🎨 **Beautiful UI** - Modern and clean interface built with Tailwind CSS
-- ⚡️ **Next.js 15** - Built on the latest Next.js features and best practices
-- 🔄 **State Management** - Efficient state management with Jotai
-- 📦 **Component Library** - Includes Shadcn components styled with Tailwind
+| Page | What it shows |
+| --- | --- |
+| Dashboard | Owner count, insurance and levy rates, committee fund balance chart, latest announcements |
+| Owners Overview | Every current owner, sorted by building then room |
+| Insurance & Levies | Coverage and collection rates, plus exactly who is outstanding |
+| Requests | All owner requests, with a form to file a new one |
+| Strata Committees | Committee member profiles and a random strata fact on every load |
+| Manage Announcements | All announcements, with a form to broadcast a new one |
 
-## Tech Stack
+![Insurance and levies](public/screenshots/insurance.png)
 
-- [Next.js](https://nextjs.org/) - React framework
-- [VisActor](https://visactor.io/) - Visualization library
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
-- [Shadcn](https://ui.shadcn.com/) - UI components
-- [Jotai](https://jotai.org/) - State management
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
+## Architecture
 
-## Quick Start
-
-You can deploy this template to Vercel by clicking the button above, or clone this repository and run it locally.
-
-[Github Repo](https://github.com/mengxi-ream/visactor-next-template)
-
-1. Clone this repository
-
-```bash
-git clone https://github.com/mengxi-ream/visactor-next-template
+```
+Next.js 15 (App Router, TypeScript, Tailwind, shadcn/ui, VisActor charts)
+        │
+        ├── /api/greeting, /api/quotes      Edge functions (time zone aware greeting, random fact)
+        ├── /api/requests                   Node route handler
+        └── /api/*.php                      PHP serverless functions (vercel-php runtime)
+                 │
+                 └── api/data/*.json        Read-only seed data
 ```
 
-2. Install dependencies
+Three runtimes in one Vercel deployment. The PHP functions are the interesting part: Vercel has no
+first-party PHP support, so they run on the community [vercel-php](https://github.com/vercel-community/php)
+runtime declared in `vercel.json`. Because every function is cold-started per request, nothing can
+be held in memory between calls.
+
+### API
+
+| Endpoint | Methods | Notes |
+| --- | --- | --- |
+| `/api/owners.php` | GET | All owners, or one via `?id=`; 404 if absent |
+| `/api/insurance.php` | GET | Aggregate coverage plus the uninsured and unpaid lists |
+| `/api/announcements.php` | GET, POST | POST validates required fields and returns 201 |
+| `/api/users.php` | GET | Committee members; passwords are never returned |
+| `/api/login.php` | POST, HEAD | Sets a `Secure`/`HttpOnly`/`SameSite=Lax` session cookie |
+| `/api/logout.php` | POST | Clears the session and the cookie |
+
+Endpoints return 200, 201, 400, 404, 405 and 500 as appropriate, handle `OPTIONS` preflight, and
+restrict CORS to known origins.
+
+## Running it locally
 
 ```bash
 pnpm install
+pnpm dev                       
+php -S 127.0.0.1:8000         
 ```
 
-3. Run the development server
+Sign in as `Alex Li`, `John Strata` or `Carl Johnson` with the password `Strata`.
 
-```bash
-pnpm dev
-```
+## A note on the database
 
-4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This app originally ran against a **MySQL database hosted on Railway**, reached through a
+`DATABASE_URL` environment variable set in Vercel. The PHP functions queried four tables — `owners`,
+`users`, `announcements` and `requests` — using prepared statements (`prepare()` / `bind_param()`)
+so that user-submitted announcement text could not be used for SQL injection.
 
-## Project Structure
+That Railway instance is no longer running, so the project now ships the same seed data as JSON in
+`api/data/` and serves it read-only. The endpoints keep their original URLs, query parameters and
+response shapes, and the old SQL is left inline as comments next to the code that replaced it. One
+consequence is that submitting an announcement or request will be kept only for your browser session rather than written to storage.
 
-```bash
-src/
-├── app/ # App router pages
-├── components/ # React components
-│ ├── chart-blocks/ # Chart components
-│ ├── nav/ # Navigation components
-│ └── ui/ # UI components
-├── config/ # Configuration files
-├── data/ # Sample data
-├── hooks/ # Custom hooks
-├── lib/ # Utility functions
-├── style/ # Global style
-└── types/ # TypeScript types
-```
+## What I learned building this
 
-## Charts
+Roughly in order, and all of it from scratch:
 
-This template includes several chart examples:
+- **Vercel and Next.js**
+- **Serverless vs. edge functions**
+- **PHP, sessions and cookies**
+- **MySQL**
 
-- Average Tickets Created (Bar Chart)
-- Ticket by Channels (Gauge Chart)
-- Conversions (Circle Packing Chart)
-- Customer Satisfaction (Linear Progress)
-- Metrics Overview
+## Credits
 
-## Contributing
+The website was started from the
+[VisActor Next.js template](https://github.com/mengxi-ream/visactor-next-template) (MIT).
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgements
-
-- [VisActor](https://visactor.io/) - For the amazing visualization library
-- [Vercel](https://vercel.com) - For the incredible deployment platform
-- [Next.js](https://nextjs.org/) - For the awesome React framework

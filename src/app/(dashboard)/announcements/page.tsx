@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import DemoNotice from "@/components/demo-notice";
+import { readDemoItems } from "@/lib/demo-store";
 
 interface Announcement 
 {
@@ -51,8 +53,15 @@ export default function AnnouncementsPage()
             }
             
             const data: AnnouncementsResponse = await response.json();
-            setAnnouncements(data.announcements || []);
-            setTotal(data.total || 0);
+            const stored = data.announcements || [];
+            // Anything created during this session is not on the server.
+            const pending = readDemoItems<Announcement>("announcements");
+            const combined = [...pending, ...stored].sort(
+                (a, b) => b.date.localeCompare(a.date)
+            );
+
+            setAnnouncements(combined);
+            setTotal(combined.length);
         } 
         catch (err) 
         {
@@ -83,6 +92,11 @@ export default function AnnouncementsPage()
 
     return (
         <div className="container mx-auto py-6">
+            <DemoNotice>
+                This demo reads from bundled seed data instead of the retired MySQL
+                database. New announcements are validated by the API but only kept
+                for the current browser session.
+            </DemoNotice>
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-2xl font-bold">Announcements</h1>

@@ -1,0 +1,9 @@
+[
+  { "id": 1, "username": "John Strata",   "password": "Strata", "pfp": "committee1.png", "role": "Chairperson",      "age": 45, "email": "John@strata.com",             "phone": "0400 000 000" },
+  { "id": 2, "username": "Carl Johnson",  "password": "Strata", "pfp": "committee2.png", "role": "Treasurer",        "age": 38, "email": "cj@strata.com",               "phone": "0400 000 002" },
+  { "id": 3, "username": "Michael Brown", "password": "Strata", "pfp": "committee3.png", "role": "Secretary",        "age": 38, "email": "michael.brown@strata.com",    "phone": "0400 000 003" },
+  { "id": 4, "username": "Alex Li",       "password": "Strata", "pfp": "avatar.png",     "role": "Committee Member", "age": 20, "email": "aspartame@strata.com",        "phone": "0404 404 404" },
+  { "id": 5, "username": "David Wilson",  "password": "Strata", "pfp": "committee5.png", "role": "Member",           "age": 29, "email": "david.wilson@strata.com",     "phone": "0400 000 005" },
+  { "id": 6, "username": "Lisa Anderson", "password": "Strata", "pfp": "committee6.png", "role": "Member",           "age": 31, "email": "lisa.anderson@strata.com",    "phone": "0400 000 006" },
+  { "id": 7, "username": "Robert Taylor", "password": "Strata", "pfp": "committee0.png", "role": "Member",           "age": 25, "email": "robert.taylor@strata.com",    "phone": "0400 000 007" }
+]

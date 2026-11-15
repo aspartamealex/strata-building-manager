@@ -6,6 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import DemoNotice from "@/components/demo-notice";
+import { readDemoItems } from "@/lib/demo-store";
 
 // Define the Request interface
 interface Request {
@@ -30,8 +32,9 @@ export default function Requests() {
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }
-        const data = await response.json();
-        setRequests(data);
+        const data: Request[] = await response.json();
+        // Anything created during this session is not on the server.
+        setRequests([...readDemoItems<Request>("requests"), ...data]);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching requests:", error);
@@ -53,6 +56,10 @@ export default function Requests() {
 
   return (
     <div className="container mx-auto py-6">
+      <DemoNotice>
+        This demo reads from bundled seed data. New requests are validated by the
+        API but only kept for the current browser session.
+      </DemoNotice>
       <div className="grid gap-3 md:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

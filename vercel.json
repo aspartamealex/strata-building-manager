@@ -1,22 +1,23 @@
 {
-    "functions": {
-      "api/*.php": {
-        "runtime": "vercel-php@0.7.3",
-        "excludeFiles": "{public/**,uploads/**,vendor/**,node_modules/**,*.cache,*.zip,*.json,.next/**}"
-      }
+  "functions": {
+    "api/*.php": {
+      "runtime": "vercel-php@0.7.3",
+      "includeFiles": "api/{data,lib}/**",
+      "excludeFiles": "{public/**,uploads/**,vendor/**,node_modules/**,*.cache,*.zip,.next/**}"
+    }
+  },
+  "regions": ["syd1"],
+  "routes": [
+    {
+      "src": "/api/(.*)\\.php",
+      "dest": "/api/$1.php"
     },
-    "routes": [
-      { 
-        "src": "/api/(.*)\\.php", 
-        "dest": "/api/$1.php"
-      },
-      { 
-        "handle": "filesystem" 
-      },
-      { 
-        "src": "/(.*)", 
-        "dest": "/$1" 
-      }
-    ]
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
 }
-  

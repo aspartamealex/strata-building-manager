@@ -119,6 +119,15 @@ export default function Dashboard()
           <CardHeader>
             <CardTitle>Login</CardTitle>
             <CardDescription>Enter your credentials to access the dashboard</CardDescription>
+            <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              <p className="font-medium">Demo credentials</p>
+              <p>
+                Sign in as <span className="font-mono">Alex Li</span>,{" "}
+                <span className="font-mono">John Strata</span> or{" "}
+                <span className="font-mono">Carl Johnson</span> with the password{" "}
+                <span className="font-mono">Strata</span>.
+              </p>
+            </div>
             {serverStatus === 'checking' && (
               <p className="text-sm text-yellow-600">Checking server status...</p>
             )}

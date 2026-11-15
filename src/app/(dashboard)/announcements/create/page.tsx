@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { addDemoItem } from "@/lib/demo-store";
 
 export default function CreateAnnouncementPage() 
 {
@@ -30,7 +31,6 @@ export default function CreateAnnouncementPage()
 
         try 
         {
-            console.log("Sending data:", data); // Debug log
             const response = await fetch("/api/announcements.php", 
             {
                 method: "POST",
@@ -40,26 +40,28 @@ export default function CreateAnnouncementPage()
                     "Accept": "application/json"
                 },
                 body: JSON.stringify(data),
-                mode: "cors",
                 credentials: "include"
             });
 
-            console.log("Response status:", response.status); // Debug log
-            
             if (!response.ok) 
             {
                 const errorData = await response.json().catch(() => null);
-                console.error("Error response:", errorData); // Debug log
                 throw new Error(errorData?.error || `HTTP error! status: ${response.status}`);
             }
 
             const result = await response.json();
-            console.log("Success response:", result); // Debug log
+
+            // The API no longer persists writes, so hold the announcement locally
+            // for the rest of this session.
+            if (result.announcement) 
+            {
+                addDemoItem("announcements", result.announcement);
+            }
+
             router.push("/announcements");
         } 
         catch (err) 
         {
-            console.error("Error details:", err); // Debug log
             setError(err instanceof Error ? err.message : "An error occurred while creating the announcement");
         } 
         finally 
@@ -73,6 +75,10 @@ export default function CreateAnnouncementPage()
             <Card>
                 <CardHeader>
                     <CardTitle>Create New Announcement</CardTitle>
+                    <CardDescription>
+                        The API validates this submission and returns 201, but the demo
+                        runs on read-only seed data so it is only kept for this session.
+                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
