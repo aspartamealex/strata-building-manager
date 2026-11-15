@@ -4,7 +4,7 @@
     "api/*.php": {
       "runtime": "vercel-php@0.7.3",
       "includeFiles": "api/{data,lib}/**",
-      "excludeFiles": "{node_modules,.next,.git,public,src}/**"
+      "excludeFiles": "{public/**,uploads/**,vendor/**,node_modules/**,*.cache,*.zip,*.json,.next/**}"
     }
   },
   "regions": ["syd1"],
